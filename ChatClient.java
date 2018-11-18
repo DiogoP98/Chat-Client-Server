@@ -8,29 +8,27 @@ import javax.swing.*;
 
 public class ChatClient {
 
-    // VariÃ¡veis relacionadas com a interface grÃ¡fica --- * NÃƒO MODIFICAR *
+    // Variables related to the GUI
     JFrame frame = new JFrame("Chat Client");
     private JTextField chatBox = new JTextField();
     private JTextArea chatArea = new JTextArea();
-    // --- Fim das variÃ¡veis relacionadas coma interface grÃ¡fica
 
-    // Se for necessÃ¡rio adicionar variÃ¡veis ao objecto ChatClient, devem
-    // ser colocadas aqui
+    // Variables related to the network
+    private Socket clientSocket;
+    private DataOutputStream outToServer;
+    private BufferedReader inFromServer;
+    // End of variables
 
 
-
-    
-    // MÃ©todo a usar para acrescentar uma string Ã  caixa de texto
-    // * NÃƒO MODIFICAR *
+    // Add message to the chatbox
     public void printMessage(final String message) {
         chatArea.append(message);
     }
 
-    
-    // Construtor
-    public ChatClient(String server, int port) throws IOException {
 
-        // InicializaÃ§Ã£o da interface grÃ¡fica --- * NÃƒO MODIFICAR *
+    // Constructor
+    public ChatClient(String server, int port) throws IOException {
+        // Initiate the GUI
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
@@ -49,44 +47,34 @@ public class ChatClient {
                     newMessage(chatBox.getText());
                 } catch (IOException ex) {
                 } finally {
-                   chatBox.setText("");
+                    chatBox.setText("");
                 }
             }
         });
-        // --- Fim da inicializaÃ§Ã£o da interface grÃ¡fica
 
-        // Se for necessÃ¡rio adicionar cÃ³digo de inicializaÃ§Ã£o ao
-        // construtor, deve ser colocado aqui
-
-
-
+        // Initiate the network communication
+        clientSocket = new Socket(server, port);
+        outToServer = new DataOutputStream(clientSocket.getOutputStream());
+        inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
     }
 
 
-    // MÃ©todo invocado sempre que o utilizador insere uma mensagem
-    // na caixa de entrada
+    // Method invoked when the user sends a message from the text box
     public void newMessage(String message) throws IOException {
-        // PREENCHER AQUI com cÃ³digo que envia a mensagem ao servidor
-
-
-
+        System.out.println("Boas");
+        outToServer.writeBytes(message + '\n');
     }
 
-    
-    // MÃ©todo principal do objecto
+
+    // Main method of the object
     public void run() throws IOException {
-        // PREENCHER AQUI
-
-
 
     }
-    
 
-    // Instancia o ChatClient e arranca-o invocando o seu mÃ©todo run()
-    // * NÃƒO MODIFICAR *
+
+    // Instantiates the ChatClient object and starts it invoking the run() method
     public static void main(String[] args) throws IOException {
         ChatClient client = new ChatClient(args[0], Integer.parseInt(args[1]));
         client.run();
     }
-
 }
