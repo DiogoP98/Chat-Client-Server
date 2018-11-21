@@ -21,8 +21,54 @@ public class ChatClient {
 
 
     // Add message to the chatbox
-    public void printMessage(final String message) {
-        chatArea.append(message);
+    public void printMessage(String message) {
+        message = message.replace("\n","");
+        String[] tokens = message.split(" ");
+        
+        if(tokens[0].equals("MESSAGE")) {
+            message = message.replaceFirst("MESSAGE","").replaceFirst(tokens[1],"");
+            message = tokens[1] + ": " + message.substring(message.indexOf(tokens[2]));
+        }
+        else if(tokens[0].equals("NEWNICK"))
+            message = tokens[1] + " mudou de nome para " + tokens[2];
+        else if(tokens[0].equals("JOINED"))
+            message = tokens[1] + " juntou-se á sala";
+        else if(tokens[0].equals("LEFT"))
+            message = tokens[1] + " saiu da sala";
+        else if(tokens[0].equals("PRIVATE")) {
+            message = message.replaceFirst("PRIVATE","").replaceFirst(tokens[1],"");
+            message = tokens[1] + ": " + message.substring(message.indexOf(tokens[2]));
+        }
+
+        System.out.println("PRINTING: " + message);
+        chatArea.append(message + "\n");
+    }
+
+    private class messageListeningSocket implements Runnable {   
+        public messageListeningSocket() {};
+
+        public void run() {
+            try {
+                boolean connected = true;
+                
+                while(connected) {
+                    String message = inFromServer.readLine() + "\n"; // readLine() removes end of line
+                    System.out.println("Received: " + message);
+                    
+                    if(message.equals(Common.ANS_BYE))
+                        connected = false;
+                    
+                    printMessage(message);
+                }
+
+                System.out.println("Exiting");
+                clientSocket.close();
+                System.exit(0);
+            }
+            catch(Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 
@@ -61,14 +107,15 @@ public class ChatClient {
 
     // Method invoked when the user sends a message from the text box
     public void newMessage(String message) throws IOException {
-        System.out.println("Boas");
-        outToServer.writeBytes(message + '\n');
+        message = message.trim();
+        outToServer.write((message + "\n").getBytes("UTF-8"));
+        System.out.println("Sent message: " + message);
     }
 
 
     // Main method of the object
     public void run() throws IOException {
-
+        new Thread(new messageListeningSocket()).start();
     }
 
 
