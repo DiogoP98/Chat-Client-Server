@@ -89,18 +89,22 @@ public class ChatServer {
 
                         SocketChannel sc = null;
 
+                        if(key.attachment() == null)
+                            key.attach(new User());
+
+                        User user = (User)key.attachment();
+
                         try {
                             // It's incoming data on a connection -- process it
                             sc = (SocketChannel)key.channel();
-
-                            if(key.attachment() == null)
-                                key.attach(new User());
 
                             System.out.println("Received a message");
 
                             // If the connection is dead, remove it from the selector
                             // and close it
-                            if(!processInput( key, sc, selector)) {
+                            if(!processInput(user, sc, selector)) {
+                                userNameSet.remove(user.getName());
+
                                 key.cancel();
 
                                 Socket s = null;
@@ -115,6 +119,8 @@ public class ChatServer {
 
                         } catch(IOException ie) {
                             // On exception, remove this channel from the selector
+                            userNameSet.remove(user.getName());
+
                             key.cancel();
 
                             try {
@@ -137,9 +143,7 @@ public class ChatServer {
 
 
     // Just read the message from the socket and send it to stdout
-    static private boolean processInput(SelectionKey key, SocketChannel sc, Selector selector) throws IOException {
-        User user = (User)key.attachment();
-        
+    static private boolean processInput(User user, SocketChannel sc, Selector selector) throws IOException {
         // Read the message to the buffer
         buffer.clear();
         sc.read(buffer);

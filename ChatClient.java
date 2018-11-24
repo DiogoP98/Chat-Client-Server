@@ -37,7 +37,7 @@ public class ChatClient {
             message = tokens[1] + " saiu da sala";
         else if(tokens[0].equals(Common.ANS_PRIVATE)) {
             message = message.replaceFirst(Common.ANS_PRIVATE, "").replaceFirst(tokens[1], "");
-            message = tokens[1] + ": " + message.substring(message.indexOf(tokens[2]));
+            message = "MP: " + tokens[1] + ": " + message.substring(message.indexOf(tokens[2]));
         }
 
         System.out.println("Printing in chat box: " + message + "\n");
