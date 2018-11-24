@@ -22,25 +22,25 @@ public class ChatClient {
 
     // Add message to the chatbox
     public void printMessage(String message) {
-        message = message.replace("\n","");
+        message = message.replace("\n", "");
         String[] tokens = message.split(" ");
         
-        if(tokens[0].equals("MESSAGE")) {
-            message = message.replaceFirst("MESSAGE","").replaceFirst(tokens[1],"");
+        if(tokens[0].equals(Common.ANS_MESSAGE)) {
+            message = message.replaceFirst(Common.ANS_MESSAGE, "").replaceFirst(tokens[1], "");
             message = tokens[1] + ": " + message.substring(message.indexOf(tokens[2]));
         }
-        else if(tokens[0].equals("NEWNICK"))
+        else if(tokens[0].equals(Common.ANS_NEWNICK))
             message = tokens[1] + " mudou de nome para " + tokens[2];
-        else if(tokens[0].equals("JOINED"))
-            message = tokens[1] + " juntou-se á sala";
-        else if(tokens[0].equals("LEFT"))
+        else if(tokens[0].equals(Common.ANS_JOINED))
+            message = tokens[1] + " juntou-se à sala";
+        else if(tokens[0].equals(Common.ANS_LEFT))
             message = tokens[1] + " saiu da sala";
-        else if(tokens[0].equals("PRIVATE")) {
-            message = message.replaceFirst("PRIVATE","").replaceFirst(tokens[1],"");
+        else if(tokens[0].equals(Common.ANS_PRIVATE)) {
+            message = message.replaceFirst(Common.ANS_PRIVATE, "").replaceFirst(tokens[1], "");
             message = tokens[1] + ": " + message.substring(message.indexOf(tokens[2]));
         }
 
-        System.out.println("PRINTING: " + message);
+        System.out.println("Printing in chat box: " + message + "\n");
         chatArea.append(message + "\n");
     }
 
@@ -53,7 +53,12 @@ public class ChatClient {
                 
                 while(connected) {
                     String message = inFromServer.readLine() + "\n"; // readLine() removes end of line
-                    System.out.println("Received: " + message);
+                    System.out.print("Received: " + message);
+
+                    if(message.equals("null\n")){
+                        System.out.println("Lost connection to server");
+                        break;
+                    }
                     
                     if(message.equals(Common.ANS_BYE))
                         connected = false;
