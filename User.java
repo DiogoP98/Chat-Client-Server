@@ -3,7 +3,7 @@ import java.nio.charset.*;
     
 public class User {
     private State state;
-    private String name;
+    private String nick;
     private String room;
     private String buffer;
 
@@ -15,7 +15,7 @@ public class User {
     
     User() {
         state = State.INIT;
-        name = null;
+        nick = null;
         room = null;
         buffer = "";
     }
@@ -28,12 +28,12 @@ public class User {
         this.state = state;
     }
 
-    String getName() {
-        return name;
+    String getNick() {
+        return nick;
     }
 
-    void setName(String name) {
-        this.name = name;
+    void setNick(String nick) {
+        this.nick = nick;
     }
 
     String getRoom() {

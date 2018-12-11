@@ -103,7 +103,7 @@ public class ChatServer {
                             // If the connection is dead, remove it from the selector
                             // and close it
                             if(!processInput(user, sc, selector)) {
-                                userNameSet.remove(user.getName());
+                                userNameSet.remove(user.getNick());
 
                                 key.cancel();
 
@@ -119,7 +119,7 @@ public class ChatServer {
 
                         } catch(IOException ie) {
                             // On exception, remove this channel from the selector
-                            userNameSet.remove(user.getName());
+                            userNameSet.remove(user.getNick());
 
                             key.cancel();
 
@@ -152,7 +152,7 @@ public class ChatServer {
         // If no data, close the connection
         if(buffer.limit()==0) {
             if(user.getState() == User.State.INSIDE)
-                sendRoomMessage(user.getName(), user.getRoom(), ANS_PATTERN_LEFT.replace("[name]", user.getName()), false);
+                sendRoomMessage(user.getNick(), user.getRoom(), ANS_PATTERN_LEFT.replace("[name]", user.getNick()), false);
             
             return false;
         }
@@ -201,14 +201,14 @@ public class ChatServer {
                             sendMessage(Common.ANS_ERROR, sc);
                         else {
                             userNameSet.add(messageTokens[1]);
-                            userNameSet.remove(user.getName());
+                            userNameSet.remove(user.getNick());
                             user.setName(messageTokens[1]);
                             sendMessage(Common.ANS_OK, sc);
                         }
                     }
                     else if(messageTokens[0].equals("/join") && messageTokens.length == 2) {
-                        message = ANS_PATTERN_JOINED.replace("[name]", user.getName());
-                        sendRoomMessage(user.getName(), messageTokens[1], message, false);
+                        message = ANS_PATTERN_JOINED.replace("[name]", user.getNick());
+                        sendRoomMessage(user.getNick(), messageTokens[1], message, false);
                         user.setRoom(messageTokens[1]);
                         user.setState(User.State.INSIDE);
                         sendMessage(Common.ANS_OK, sc);
@@ -220,14 +220,14 @@ public class ChatServer {
                             sendMessage(Common.ANS_ERROR, sc); // if receiver doesn't exist, send error to sender
                         else {
                             message = message.substring(message.indexOf(messageTokens[2]));
-                            message = ANS_PATTERN_PRIVATE.replace("[name]", user.getName()).replace("[message]", message);
+                            message = ANS_PATTERN_PRIVATE.replace("[name]", user.getNick()).replace("[message]", message);
                             sendPrivateMessage(message, receiver);
                             sendMessage(Common.ANS_OK, sc);
                         }
                     }
                     else if(messageTokens[0].equals("/bye")) {
                         sendMessage(Common.ANS_BYE, sc);
-                        userNameSet.remove(user.getName());
+                        userNameSet.remove(user.getNick());
                         return false;
                     }
                     else
@@ -239,20 +239,20 @@ public class ChatServer {
                         if(userNameSet.contains(messageTokens[1]))
                             sendMessage(Common.ANS_ERROR, sc);
                         else {
-                            message = ANS_PATTERN_NEWNICK.replace("[old]",user.getName()).replace("[new]",messageTokens[1]);
-                            sendRoomMessage(user.getName(), user.getRoom(), message, false);
+                            message = ANS_PATTERN_NEWNICK.replace("[old]",user.getNick()).replace("[new]",messageTokens[1]);
+                            sendRoomMessage(user.getNick(), user.getRoom(), message, false);
                             sendMessage(Common.ANS_OK, sc);
-                            userNameSet.remove(user.getName());
+                            userNameSet.remove(user.getNick());
                             userNameSet.add(messageTokens[1]);
                             user.setName(messageTokens[1]);
                         }
                     }
                     else if(messageTokens[0].equals("/join") && messageTokens.length == 2) {
-                        message = ANS_PATTERN_LEFT.replace("[name]", user.getName());
-                        sendRoomMessage(user.getName(), user.getRoom(), message, false);
+                        message = ANS_PATTERN_LEFT.replace("[name]", user.getNick());
+                        sendRoomMessage(user.getNick(), user.getRoom(), message, false);
                         user.setRoom(messageTokens[1]);
-                        message = ANS_PATTERN_JOINED.replace("[name]", user.getName());
-                        sendRoomMessage(user.getName(), user.getRoom(), message, false);
+                        message = ANS_PATTERN_JOINED.replace("[name]", user.getNick());
+                        sendRoomMessage(user.getNick(), user.getRoom(), message, false);
                         sendMessage(Common.ANS_OK, sc);
                     }
                     else if(messageTokens[0].equals("/priv") && messageTokens.length > 2) {
@@ -262,30 +262,30 @@ public class ChatServer {
                             sendMessage(Common.ANS_ERROR, sc); // receiver doesn't exist, throw error to sender
                         else {
                             message = message.substring(message.indexOf(messageTokens[2]));
-                            message = ANS_PATTERN_PRIVATE.replace("[name]", user.getName()).replace("[message]", message);
+                            message = ANS_PATTERN_PRIVATE.replace("[name]", user.getNick()).replace("[message]", message);
                             sendPrivateMessage(message, receiver);
                             sendMessage(Common.ANS_OK, sc);
                         }
                     }
                     else if(messageTokens[0].equals("/leave")) {
-                        message = ANS_PATTERN_LEFT.replace("[name]", user.getName());
-                        sendRoomMessage(user.getName(), user.getRoom(), message, false);
+                        message = ANS_PATTERN_LEFT.replace("[name]", user.getNick());
+                        sendRoomMessage(user.getNick(), user.getRoom(), message, false);
                         user.setState(User.State.OUTSIDE);
                         sendMessage(Common.ANS_OK, sc);
                     }
                     else if(messageTokens[0].equals("/bye")) {
-                        message = ANS_PATTERN_LEFT.replace("[name]", user.getName());
-                        sendRoomMessage(user.getName(), user.getRoom(), message, false);
+                        message = ANS_PATTERN_LEFT.replace("[name]", user.getNick());
+                        sendRoomMessage(user.getNick(), user.getRoom(), message, false);
                         sendMessage(Common.ANS_BYE, sc);
-                        userNameSet.remove(user.getName());
+                        userNameSet.remove(user.getNick());
                         return false;
                     }
                     else if(!messageTokens[0].matches("/[^/]*")) {
                         if(message.startsWith("//"))
                             message = message.substring(1); // escape first '/''
 
-                        message = ANS_PATTERN_MESSAGE.replace("[name]", user.getName()).replace("[message]", message);
-                        sendRoomMessage(user.getName(), user.getRoom(), message, true);
+                        message = ANS_PATTERN_MESSAGE.replace("[name]", user.getNick()).replace("[message]", message);
+                        sendRoomMessage(user.getNick(), user.getRoom(), message, true);
                     }
                     else
                         sendMessage(Common.ANS_ERROR, sc);
@@ -320,7 +320,7 @@ public class ChatServer {
             if(user == null                                 ||
                 user.getState() != User.State.INSIDE        ||
                 !user.getRoom().equals(room)                ||
-                (user.getName().equals(username) && !sendMessageToSender)) // sendMessageToSender is false if the message is a command
+                (user.getNick().equals(username) && !sendMessageToSender)) // sendMessageToSender is false if the message is a command
                 continue;
 
             SocketChannel sc = (SocketChannel)key.channel();
@@ -335,7 +335,7 @@ public class ChatServer {
             SelectionKey key = it.next();
 
             User user = (User)key.attachment();
-            if(user == null || !user.getName().equals(to))
+            if(user == null || !user.getNick().equals(to))
                 continue;
 
             SocketChannel sc = (SocketChannel)key.channel();
