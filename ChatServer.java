@@ -182,7 +182,7 @@ public class ChatServer {
                             sendMessage(Common.ANS_ERROR, sc);
                         else {
                             userNameSet.add(messageTokens[1]);
-                            user.setName(messageTokens[1]);
+                            user.setNick(messageTokens[1]);
                             user.setState(User.State.OUTSIDE);
                             sendMessage(Common.ANS_OK, sc);
                         }
@@ -202,7 +202,7 @@ public class ChatServer {
                         else {
                             userNameSet.add(messageTokens[1]);
                             userNameSet.remove(user.getNick());
-                            user.setName(messageTokens[1]);
+                            user.setNick(messageTokens[1]);
                             sendMessage(Common.ANS_OK, sc);
                         }
                     }
@@ -244,7 +244,7 @@ public class ChatServer {
                             sendMessage(Common.ANS_OK, sc);
                             userNameSet.remove(user.getNick());
                             userNameSet.add(messageTokens[1]);
-                            user.setName(messageTokens[1]);
+                            user.setNick(messageTokens[1]);
                         }
                     }
                     else if(messageTokens[0].equals("/join") && messageTokens.length == 2) {
