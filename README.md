@@ -1,5 +1,6 @@
 # Chat-Client-Server
 Communication Networks assignment
+
 Built a server and client with a GUI for a Chat application on desktop.
 
 
