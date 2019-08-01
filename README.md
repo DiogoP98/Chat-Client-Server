@@ -25,7 +25,7 @@ java ChatClient 192.168.1.100 1337
 
 
 ## Authors
-| Nome                            | Numero UP   | GitHub                                          |
+| Name                            | UP Number   | GitHub                                          |
 | ------------------------------- | ----------- | ----------------------------------------------- |
 | Diogo Filipe Pinto Pereira      | up201605323 | [DiogoP98](https://github.com/DiogoP98)         |
 | Frederico Emanuel Almeida Lopes | up201604674 | [FredyR4zox](https://www.github.com/FredyR4zox) |
